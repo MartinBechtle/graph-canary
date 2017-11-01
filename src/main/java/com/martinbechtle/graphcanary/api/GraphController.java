@@ -1,7 +1,7 @@
 package com.martinbechtle.graphcanary.api;
 
 import com.martinbechtle.graphcanary.graph.Graph;
-import com.martinbechtle.graphcanary.graph.GraphProvider;
+import com.martinbechtle.graphcanary.graph.GraphService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,17 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/graph")
 public class GraphController {
 
-    private final GraphProvider graphProvider;
+    private final GraphService graphService;
 
     @Autowired
-    public GraphController(GraphProvider graphProvider) {
+    public GraphController(GraphService graphService) {
 
-        this.graphProvider = graphProvider;
+        this.graphService = graphService;
     }
 
     @GetMapping
     public Graph getGraph() {
 
-        return graphProvider.get();
+        return graphService.get();
     }
 }

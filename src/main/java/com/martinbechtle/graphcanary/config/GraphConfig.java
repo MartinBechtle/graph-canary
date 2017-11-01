@@ -1,7 +1,7 @@
 package com.martinbechtle.graphcanary.config;
 
-import com.martinbechtle.graphcanary.graph.GraphProvider;
-import com.martinbechtle.graphcanary.graph.StaticGraphProvider;
+import com.martinbechtle.graphcanary.graph.GraphService;
+import com.martinbechtle.graphcanary.graph.StaticGraphService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class GraphConfig {
 
     @Bean
-    public GraphProvider graphProvider(CanaryProperties canaryProperties) {
+    public GraphService graphProvider(CanaryProperties canaryProperties) {
 
-        return new StaticGraphProvider();
+        return new StaticGraphService();
     }
 }
