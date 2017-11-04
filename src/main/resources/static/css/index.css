@@ -3,7 +3,12 @@ body {
     margin-bottom: 20px;
 }
 
-#graph {
+#graph-container {
     border: 1px solid black;
     background-color: lightcyan;
+    width: 80%;
+    height: 80%;
+    resize: both;
+    overflow: auto;
+    padding: 20px;
 }
