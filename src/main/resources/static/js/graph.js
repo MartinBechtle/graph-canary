@@ -7,14 +7,17 @@ const graphOptions = {
             background: '#666666'
         },
         font: {
-            color: '#eeb625',
-            bold: true
+            color: 'black',
+            bold: true,
+            size: 20
         }
     },
     edges: {
-        color: 'lightgray'
+        color: 'lightgray',
+        width: 2
     },
     layout: {
+        randomSeed: 0,
         hierarchical: {
             enabled: true
         }
@@ -29,11 +32,6 @@ function buildGraph(graph, container) {
 }
 
 const IMG_DIR = 'img/dependencies/';
-
-function labelFor(graphNode) {
-
-    return graphNode.name;
-}
 
 function typeToImage(type) {
 
@@ -74,9 +72,11 @@ function canaryGraphToVisGraph(canaryGraph) {
 
     const nodes = canaryGraph.nodes.map(function (node) {
 
+        const label = node.name;
+
         return {
             id: node.name,
-            label: labelFor(node),
+            label: label,
             shape: 'circularImage',
             image: IMG_DIR + typeToImage(node.type)
         }
@@ -84,7 +84,15 @@ function canaryGraphToVisGraph(canaryGraph) {
 
     const edges = canaryGraph.edges.map(function (edge) {
 
+        const color = edge.status === 'HEALTHY' || edge.status === 'UNKNOWN' ?
+            '#3fc435' :
+            '#ff000b' ;
+
+        const dashes = edge.status === 'CRITICAL' || edge.status === 'UNKNOWN';
+
         return {
+            color: color,
+            dashes: dashes,
             from: edge.from,
             to: edge.to
         }

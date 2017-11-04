@@ -61,82 +61,106 @@ const fakeGraph = {
             type: 'RESOURCE'
         }
     ],
+
+    // HEALTHY,
+    // UNKNOWN,
+    // DEGRADED,
+    // CRITICAL;
     edges: [
         {
             from: 'api-1',
-            to: 'api-2'
+            to: 'api-2',
+            status: 'HEALTHY'
         },
         {
             from: 'api-1',
-            to: 'api-3'
+            to: 'api-3',
+            status: 'HEALTHY'
         },
         {
             from: 'api-1',
-            to: 'db-1'
+            to: 'db-1',
+            status: 'HEALTHY'
         },
         {
             from: 'api-2',
-            to: 'api-3'
+            to: 'api-3',
+            status: 'HEALTHY'
         },
         {
             from: 'api-2',
-            to: 'db-2'
+            to: 'db-2',
+            status: 'HEALTHY'
         },
         {
             from: 'api-3',
-            to: 'cache-1'
+            to: 'cache-1',
+            status: 'UNKNOWN'
         },
         {
             from: 'api-3',
-            to: 'storage-1'
+            to: 'storage-1',
+            status: 'HEALTHY'
         },
         {
             from: 'api-1',
-            to: 'config-1'
+            to: 'config-1',
+            status: 'HEALTHY'
         },
         {
             from: 'api-1',
-            to: 'worker-1'
+            to: 'worker-1',
+            status: 'HEALTHY'
         },
         {
             from: 'api-2',
-            to: 'worker-2'
+            to: 'worker-2',
+            status: 'HEALTHY'
         },
         {
             from: 'api-1',
-            to: 'ftp-1'
+            to: 'ftp-1',
+            status: 'DEGRADED'
         },
         {
             from: 'api-1',
-            to: 'queue-1'
+            to: 'queue-1',
+            status: 'HEALTHY'
         },
         {
             from: 'api-2',
-            to: 'queue-1'
+            to: 'queue-1',
+            status: 'HEALTHY'
         },
         {
             from: 'api-3',
-            to: 'queue-1'
+            to: 'queue-1',
+            status: 'HEALTHY'
         },
         {
             from: 'api-3',
-            to: 'channel-1'
+            to: 'channel-1',
+            status: 'DEGRADED'
         },
         {
             from: 'worker-1',
-            to: 'channel-1'
+            to: 'channel-1',
+            status: 'DEGRADED'
         },
         {
             from: 'worker-2',
-            to: 'stream-1'
+            to: 'stream-1',
+            status: 'HEALTHY'
         },
         {
             from: 'api-1',
-            to: 'http-1'
+            to: 'http-1',
+            status: 'CRITICAL'
         },
         {
             from: 'api-3',
-            to: 'resource-1'
+            to: 'resource-1',
+            status: 'CRITICAL'
         }
     ]
 };
