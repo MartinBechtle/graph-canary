@@ -1,3 +1,9 @@
+const filterOptions = {
+    service: {
+        name: null
+    }
+};
+
 const graphOptions = {
     nodes: {
         borderWidth: 4,
@@ -8,7 +14,6 @@ const graphOptions = {
         },
         font: {
             color: 'black',
-            bold: true,
             size: 20
         }
     },
@@ -28,7 +33,12 @@ function buildGraph(graph, container) {
 
     const data = canaryGraphToVisGraph(graph);
 
-    return new vis.Network(container, data, graphOptions);
+    const network = new vis.Network(container, data, graphOptions);
+
+    return {
+        network: network,
+        data: data
+    }
 }
 
 const IMG_DIR = 'img/dependencies/';
@@ -70,7 +80,14 @@ function typeToImage(type) {
  */
 function canaryGraphToVisGraph(canaryGraph) {
 
-    const nodes = canaryGraph.nodes.map(function (node) {
+    const nodes = canaryGraph.nodes.filter(function (node) {
+
+        if (filterOptions && filterOptions.service && filterOptions.service.name) {
+            return isRelatedTo(node, filterOptions.service.name, canaryGraph);
+        }
+        return true;
+
+    }).map(function (node) {
 
         const label = node.name;
 
@@ -86,7 +103,7 @@ function canaryGraphToVisGraph(canaryGraph) {
 
         const color = edge.status === 'HEALTHY' || edge.status === 'UNKNOWN' ?
             '#3fc435' :
-            '#ff000b' ;
+            '#ff000b';
 
         const dashes = edge.status === 'CRITICAL' || edge.status === 'UNKNOWN';
 
@@ -102,4 +119,22 @@ function canaryGraphToVisGraph(canaryGraph) {
         nodes: nodes,
         edges: edges
     };
+}
+
+/**
+ * @true if node's name corresponds to nodeName or is related to a node with such name
+ */
+function isRelatedTo(node, nodeName, canaryGraph) {
+
+    if (nodeName === node.name) {
+        return true;
+    }
+    for (var i = 0; i < canaryGraph.edges.length; i++) {
+
+        const edge = canaryGraph.edges[i];
+        if ((edge.from === node.name && edge.to === nodeName) ||
+            (edge.from === nodeName && edge.to === node.name)) {
+            return true;
+        }
+    }
 }

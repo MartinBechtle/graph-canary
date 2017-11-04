@@ -24,6 +24,14 @@
         </div>
     </header>
     <button class="btn btn-info" id="toggle-hierarchical">Hierarchical view on/off</button>
+    <div class="btn-group select" id="graph-filter-select">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="selected">Show all</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu option" role="menu" id="graph-filters">
+            <li id="filter-all"><a href="#">Show all</a></li>
+        </ul>
+    </div>
     <div id="graph"></div>
 </div>
 
