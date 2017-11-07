@@ -1,13 +1,14 @@
 canary:
+  threads: 10
   endpoints: [{
     name: 'something',
     url: 'somewhere',
-    pollFrequencySec: 10
+    pollFrequencySec: 2
   },
   {
-    name: 'something',
+    name: 'somethingElse',
     url: 'somewhereElse',
-    pollFrequencySec: 15
+    pollFrequencySec: 5
 }]
 
 spring:

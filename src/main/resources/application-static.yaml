@@ -1,0 +1,8 @@
+canary:
+  fake: true
+
+spring:
+  devtools:
+    livereload:
+      enabled: true
+      port: 35729
