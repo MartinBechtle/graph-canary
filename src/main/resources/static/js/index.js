@@ -16,12 +16,6 @@ $(document).ready(function () {
 var graph = null;
 var hierarchical = true;
 
-function loadFakeGraph() {
-
-    var container = document.getElementById('graph');
-    graph = buildGraph(fakeGraph, container);
-}
-
 function toggleHierarchical() {
 
     if (hierarchical) {
@@ -37,8 +31,16 @@ function toggleHierarchical() {
 
 function loadGraph() {
 
-    loadFakeGraph();
-    updateFilters();
+    $.get({
+        url: 'graph',
+
+        success: function(data) {
+
+            var container = document.getElementById('graph');
+            graph = buildGraph(data, container);
+            updateFilters();
+        }
+    });
 }
 
 function updateFilters() {
