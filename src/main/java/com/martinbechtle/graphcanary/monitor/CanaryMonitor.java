@@ -17,10 +17,14 @@ public class CanaryMonitor {
 
     private final ScheduledExecutorService scheduledExecutorService;
 
+    private final CanaryRetriever canaryRetriever;
+
     public CanaryMonitor(CanaryProperties properties,
-                         ScheduledExecutorService scheduledExecutorService) {
+                         ScheduledExecutorService scheduledExecutorService,
+                         CanaryRetriever canaryRetriever) {
 
         this.scheduledExecutorService = scheduledExecutorService;
+        this.canaryRetriever = canaryRetriever;
 
         properties.getEndpoints().forEach(this::scheduleCanaryCheck);
     }
@@ -47,7 +51,7 @@ public class CanaryMonitor {
 
     private void doQuery(CanaryEndpoint canaryEndpoint) {
 
-        // TODO implement check and timeout
         logger.info("Querying " + canaryEndpoint.getName());
+        canaryRetriever.retrieveAndUpdate(canaryEndpoint);
     }
 }

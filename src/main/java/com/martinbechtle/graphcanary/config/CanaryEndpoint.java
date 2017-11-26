@@ -22,6 +22,8 @@ public class CanaryEndpoint {
     @NotNull
     private Integer pollFrequencySec;
 
+    private String secret;
+
     public String getName() {
 
         return name;
@@ -44,14 +46,25 @@ public class CanaryEndpoint {
         return this;
     }
 
-    public int getPollFrequencySec() {
+    public Integer getPollFrequencySec() {
 
         return pollFrequencySec;
     }
 
-    public CanaryEndpoint setPollFrequencySec(int pollFrequencySec) {
+    public CanaryEndpoint setPollFrequencySec(Integer pollFrequencySec) {
 
         this.pollFrequencySec = pollFrequencySec;
+        return this;
+    }
+
+    public String getSecret() {
+
+        return secret;
+    }
+
+    public CanaryEndpoint setSecret(String secret) {
+
+        this.secret = secret;
         return this;
     }
 }
