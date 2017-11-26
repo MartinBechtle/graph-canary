@@ -1,0 +1,18 @@
+canary:
+  threads: 10
+  endpoints: [{
+    name: 'something',
+    url: 'somewhere',
+    pollFrequencySec: 2
+  },
+  {
+    name: 'somethingElse',
+    url: 'somewhereElse',
+    pollFrequencySec: 5
+}]
+
+spring:
+  devtools:
+    livereload:
+      enabled: true
+      port: 35729
