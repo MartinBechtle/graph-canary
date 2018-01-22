@@ -20,9 +20,10 @@ public class HttpClientProperties {
         return maxConnections;
     }
 
-    public void setMaxConnections(int maxConnections) {
+    public HttpClientProperties setMaxConnections(int maxConnections) {
 
         this.maxConnections = maxConnections;
+        return this;
     }
 
     public long getKeepAliveDurationInMillis() {
@@ -30,9 +31,10 @@ public class HttpClientProperties {
         return keepAliveDurationInMillis;
     }
 
-    public void setKeepAliveDurationInMillis(long keepAliveDurationInMillis) {
+    public HttpClientProperties setKeepAliveDurationInMillis(long keepAliveDurationInMillis) {
 
         this.keepAliveDurationInMillis = keepAliveDurationInMillis;
+        return this;
     }
 
     public long getConnectTimeoutInMillis() {
@@ -40,9 +42,10 @@ public class HttpClientProperties {
         return connectTimeoutInMillis;
     }
 
-    public void setConnectTimeoutInMillis(long connectTimeoutInMillis) {
+    public HttpClientProperties setConnectTimeoutInMillis(long connectTimeoutInMillis) {
 
         this.connectTimeoutInMillis = connectTimeoutInMillis;
+        return this;
     }
 
     public long getReadTimeoutInMillis() {
@@ -50,9 +53,10 @@ public class HttpClientProperties {
         return readTimeoutInMillis;
     }
 
-    public void setReadTimeoutInMillis(long readTimeoutInMillis) {
+    public HttpClientProperties setReadTimeoutInMillis(long readTimeoutInMillis) {
 
         this.readTimeoutInMillis = readTimeoutInMillis;
+        return this;
     }
 
     public long getWriteTimeoutInMillis() {
@@ -60,8 +64,9 @@ public class HttpClientProperties {
         return writeTimeoutInMillis;
     }
 
-    public void setWriteTimeoutInMillis(long writeTimeoutInMillis) {
+    public HttpClientProperties setWriteTimeoutInMillis(long writeTimeoutInMillis) {
 
         this.writeTimeoutInMillis = writeTimeoutInMillis;
+        return this;
     }
 }

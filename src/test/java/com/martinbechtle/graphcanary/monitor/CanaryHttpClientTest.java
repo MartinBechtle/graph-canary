@@ -31,7 +31,10 @@ public class CanaryHttpClientTest {
     @Before
     public void setUp() throws IOException {
 
-        OkHttpClient okHttpClient = new GraphConfig().okHttpClient(new HttpClientProperties());
+        OkHttpClient okHttpClient = new GraphConfig().okHttpClient(
+                new HttpClientProperties()
+                        .setConnectTimeoutInMillis(500));
+
         ObjectMapper objectMapper = new JacksonConfig().objectMapper();
         canaryHttpClient = new CanaryHttpClient(okHttpClient, objectMapper);
 
@@ -48,13 +51,17 @@ public class CanaryHttpClientTest {
                 .setUrl(server.url("/canary").toString())
                 .setSecret("october");
 
-        // TODO remove immutability from API? or have it as an interface?
         canaryHttpClient.getCanary(canaryEndpoint);
 
         RecordedRequest request = server.takeRequest();
 
         assertThat(request.getMethod()).isEqualToIgnoringCase("get");
         assertThat(request.getPath()).isEqualTo("/canary");
+    }
+
+    @Test
+    public void getCanary_ShouldMapResponseFieldsCorrectly_WhenOkResponse() throws Exception {
+
     }
 
 }
