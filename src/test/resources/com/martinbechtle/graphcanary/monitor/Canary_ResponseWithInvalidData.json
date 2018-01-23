@@ -1,0 +1,13 @@
+{
+  "serviceName": "test-service",
+  "result": "OK",
+  "tweets": [
+    {
+      "dependency": {
+        "importance": "IDONOTEXIST",
+        "type": "RESOURCE",
+        "name": "dummyMonitor1"
+      }
+    }
+  ]
+}
