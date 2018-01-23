@@ -6,11 +6,25 @@
       "dependency": {
         "importance": "PRIMARY",
         "type": "RESOURCE",
-        "name": "dummyMonitor"
+        "name": "dummyMonitor1"
       },
       "result": {
         "status": "HEALTHY",
         "statusText": ""
-      }
-    }]
+      },
+      "executionTimeMs": 20500
+    },
+    {
+      "dependency": {
+        "importance": "SECONDARY",
+        "type": "WORKER",
+        "name": "dummyMonitor2"
+      },
+      "result": {
+        "status": "DEGRADED",
+        "statusText": "I'm broken"
+      },
+      "executionTimeMs": 1
+    }
+  ]
 }
