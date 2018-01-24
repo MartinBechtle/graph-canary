@@ -92,27 +92,34 @@ public class CanaryHttpClientTest {
         assertThat(canary.getTweets()).isEqualTo(expectedTweets);
     }
 
-    // TODO
-    public void getCanary_ReturnErrorCanary_WhenOkResponseWithMissingData() throws Exception {
+    @Test(expected = CanaryMappingException.class)
+    public void getCanary_ShouldThrowException_WhenOkResponseWithInvalidData() throws Exception {
 
         server.enqueue(new MockResponse().setResponseCode(200)
-                .setBody(resourceAsString("Canary_OkResponse.json", getClass()))
+                .setBody(resourceAsString("Canary_ResponseWithInvalidData.json", getClass()))
         );
         CanaryEndpoint canaryEndpoint = new CanaryEndpoint()
                 .setUrl(server.url("/canary").toString());
 
-        Canary canary = canaryHttpClient.getCanary(canaryEndpoint);
-
-        assertThat(canary).isNotNull();
-        assertThat(canary.getServiceName()).isEqualTo("test-service");
-        assertThat(canary.getResult()).isEqualTo(CanaryResult.ERROR);
+        canaryHttpClient.getCanary(canaryEndpoint);
     }
 
-    // TODO
-    public void getCanary_ReturnErrorCanary_WhenOkResponseWithInvalidData() throws Exception {
+    @Test(expected = CanaryHttpException.class)
+    public void getCanary_ShouldThrowException_WhenNon200HttpResponse() throws Exception {
 
-        server.enqueue(new MockResponse().setResponseCode(200)
-                .setBody(resourceAsString("Canary_OkResponse.json", getClass()))
+        server.enqueue(new MockResponse().setResponseCode(500));
+
+        CanaryEndpoint canaryEndpoint = new CanaryEndpoint()
+                .setUrl(server.url("/canary").toString());
+
+        canaryHttpClient.getCanary(canaryEndpoint);
+    }
+
+    @Test
+    public void getCanary_ShouldReturnForbiddenCanary_WhenUnauthorizedResponseWithValidBody() throws Exception {
+
+        server.enqueue(new MockResponse().setResponseCode(401)
+                .setBody(resourceAsString("Canary_ForbiddenResponse.json", getClass()))
         );
         CanaryEndpoint canaryEndpoint = new CanaryEndpoint()
                 .setUrl(server.url("/canary").toString());
@@ -121,7 +128,7 @@ public class CanaryHttpClientTest {
 
         assertThat(canary).isNotNull();
         assertThat(canary.getServiceName()).isEqualTo("test-service");
-        assertThat(canary.getResult()).isEqualTo(CanaryResult.ERROR);
+        assertThat(canary.getResult()).isEqualTo(CanaryResult.FORBIDDEN);
     }
 
 }

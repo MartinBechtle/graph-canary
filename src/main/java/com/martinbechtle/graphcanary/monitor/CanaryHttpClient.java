@@ -1,13 +1,15 @@
 package com.martinbechtle.graphcanary.monitor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.jcanary.api.Canary;
-import com.martinbechtle.jcanary.api.CanaryResult;
 import com.martinbechtle.jrequire.Require;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,8 @@ import java.util.Optional;
  */
 @Component
 public class CanaryHttpClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(CanaryHttpClient.class);
 
     private final OkHttpClient httpClient;
 
@@ -32,8 +36,8 @@ public class CanaryHttpClient {
     }
 
     /**
-     * @return a {@link Canary} of result {@link CanaryResult#OK} when the HTTP call to the canary endpoint was successful
-     * and the response body could be understood.
+     * @throws CanaryHttpException in case of network error or non-200 response
+     * @throws CanaryMappingException if the response body cannot be mapped to a {@link Canary}
      */
     public Canary getCanary(CanaryEndpoint canaryEndpoint) {
 
@@ -50,10 +54,27 @@ public class CanaryHttpClient {
 
         try (Response response = httpClient.newCall(request).execute()) {
 
-            return objectMapper.readValue(response.body().bytes(), Canary.class);
+            int responseCode = response.code();
+
+            if (response.isSuccessful() || isUnauthorized(responseCode)) {
+
+                return objectMapper.readValue(response.body().bytes(), Canary.class);
+            }
+            logger.warn("Non-successful http response while retrieving canary at " + canaryEndpoint.getUrl());
+            throw new CanaryHttpException("Status: " + responseCode);
+        }
+        catch (JsonProcessingException e) {
+            logger.warn("Invalid response body found while retrieving canary at " + canaryEndpoint.getUrl());
+            throw new CanaryMappingException(e);
         }
         catch (IOException e) {
-            throw new RuntimeException(e); // TODO more specific?
+            logger.warn("Network exception while retrieving canary at " + canaryEndpoint.getUrl());
+            throw new CanaryHttpException(e);
         }
+    }
+
+    private static boolean isUnauthorized(int code) {
+
+        return code == 401 || code == 403;
     }
 }
