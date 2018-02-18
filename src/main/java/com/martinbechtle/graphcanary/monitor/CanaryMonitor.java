@@ -36,7 +36,8 @@ public class CanaryMonitor {
                 doQuery(canaryEndpoint);
             }
             finally {
-                scheduleCanaryCheck(canaryEndpoint); // TODO adjust timing
+                // TODO adjust timing to take into consideration the time it took to fetch the canary
+                scheduleCanaryCheck(canaryEndpoint);
             }
         };
     }
