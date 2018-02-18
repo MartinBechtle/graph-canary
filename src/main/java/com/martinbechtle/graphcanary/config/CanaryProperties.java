@@ -2,6 +2,7 @@ package com.martinbechtle.graphcanary.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "canary")
 public class CanaryProperties {
 
-    private List<CanaryEndpoint> endpoints;
+    private List<CanaryEndpoint> endpoints = new ArrayList<>();
 
     private boolean fake = false;
 

@@ -2,6 +2,7 @@ package com.martinbechtle.graphcanary.graph;
 
 import com.martinbechtle.jcanary.api.Canary;
 
+import static com.martinbechtle.graphcanary.util.Json.json;
 import static java.util.Collections.emptyList;
 
 /**
@@ -21,5 +22,6 @@ public class InMemoryDynamicGraphService implements GraphService {
     @Override
     public void onCanaryReceived(Canary canary) {
 
+        System.out.println(json(canary));
     }
 }

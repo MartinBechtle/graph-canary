@@ -3,13 +3,19 @@ canary:
   endpoints: [{
     name: 'something',
     url: 'somewhere',
-    pollFrequencySec: 2
+    pollFrequencySec: 2,
+    secret: 'thisIsSecret'
   },
   {
     name: 'somethingElse',
     url: 'somewhereElse',
     pollFrequencySec: 5
 }]
+
+canaryMonitor:
+  httpClient:
+    maxConnections: 20
+    connectTimeoutInMillis: 5000
 
 spring:
   devtools:
