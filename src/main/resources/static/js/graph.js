@@ -101,11 +101,13 @@ function canaryGraphToVisGraph(canaryGraph) {
 
     const edges = canaryGraph.edges.map(function (edge) {
 
-        const color = edge.status === 'HEALTHY' || edge.status === 'UNKNOWN' ?
+        const status = edge.dependencyStatus;
+
+        const color = status === 'HEALTHY' || status === 'UNKNOWN' ?
             '#3fc435' :
             '#ff000b';
 
-        const dashes = edge.status === 'CRITICAL' || edge.status === 'UNKNOWN';
+        const dashes = status === 'CRITICAL' || status === 'UNKNOWN';
 
         return {
             color: color,
