@@ -7,15 +7,11 @@ import com.martinbechtle.jcanary.api.DependencyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -46,21 +42,23 @@ public class InMemoryDynamicGraphService implements GraphService {
         if (serviceMap.isEmpty()) {
             return new Graph(emptyList(), emptyList());
         }
-        List<GraphNode> serviceNodes = serviceMap.values()
-                .stream()
-                .map(canary -> new GraphNode(canary.getServiceName(), DependencyType.API))
-                .collect(toList());
+        Map<String, GraphNode> graphNodesMappedByDependencyName = new HashMap<>();
 
-        Set<GraphNode> allNodes = new HashSet<>();
         serviceMap.values()
-                .forEach(canary -> ofNullable(canary.getTweets()).orElse(emptyList())
-                        .forEach(healthTweet -> {
-                            Dependency dependency = healthTweet.getDependency();
-                            GraphNode graphNode = new GraphNode(dependency.getName(), dependency.getType());
-                            allNodes.add(graphNode);
-                        }));
+                .forEach(canary -> {
 
-        allNodes.addAll(serviceNodes);
+                    // add the service itself to map
+                    String serviceName = canary.getServiceName();
+                    graphNodesMappedByDependencyName.put(serviceName, new GraphNode(serviceName, DependencyType.API));
+
+                    // add all the services dependencies to map
+                    ofNullable(canary.getTweets()).orElse(emptyList())
+                            .forEach(healthTweet -> {
+                                Dependency dependency = healthTweet.getDependency();
+                                GraphNode graphNode = new GraphNode(dependency.getName(), dependency.getType());
+                                graphNodesMappedByDependencyName.put(dependency.getName(), graphNode);
+                            });
+                });
 
         // in the current implementation, in case of duplicates, any subsequent edge might be ignored
         // TODO for the future make it so that the least healthy of the two duplicates is picked
@@ -70,12 +68,14 @@ public class InMemoryDynamicGraphService implements GraphService {
                         .forEach(healthTweet -> {
 
                             String from = canary.getServiceName();
-                            String to =  healthTweet.getDependency().getName();
+                            String to = healthTweet.getDependency().getName();
                             DependencyStatus status = healthTweet.getResult().getStatus();
 
                             GraphEdge graphEdge = new GraphEdge(from, to, status);
                             edges.add(graphEdge);
                         }));
+
+        List<GraphNode> allNodes = new ArrayList<>(graphNodesMappedByDependencyName.values());
 
         return new Graph(new ArrayList<>(allNodes), emptyList());
     }
