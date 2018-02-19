@@ -44,6 +44,12 @@ public class InMemoryDynamicGraphService implements GraphService {
         }
         Map<String, GraphNode> graphNodesMappedByDependencyName = new HashMap<>();
 
+        // in the current implementation, in case of duplicates, any subsequent edge might be ignored
+        // TODO for the future make it so that the least healthy of the two duplicates is picked
+        Set<GraphEdge> edges = new HashSet<>();
+        // set relies on a particular implementation of hash and equals on GraphNode to avoid duplicates even in case of inverted from/to
+
+        // iterating over this safe, but might not "see" any changes done concurrently on the map, which is fine
         serviceMap.values()
                 .forEach(canary -> {
 
@@ -57,33 +63,25 @@ public class InMemoryDynamicGraphService implements GraphService {
                                 Dependency dependency = healthTweet.getDependency();
                                 GraphNode graphNode = new GraphNode(dependency.getName(), dependency.getType());
                                 graphNodesMappedByDependencyName.put(dependency.getName(), graphNode);
+
+                                String from = canary.getServiceName();
+                                String to = healthTweet.getDependency().getName();
+                                DependencyStatus status = healthTweet.getResult().getStatus();
+
+                                GraphEdge graphEdge = new GraphEdge(from, to, status);
+                                edges.add(graphEdge);
                             });
                 });
 
-        // in the current implementation, in case of duplicates, any subsequent edge might be ignored
-        // TODO for the future make it so that the least healthy of the two duplicates is picked
-        Set<GraphEdge> edges = new HashSet<>();
-        serviceMap.values()
-                .forEach(canary -> ofNullable(canary.getTweets()).orElse(emptyList())
-                        .forEach(healthTweet -> {
-
-                            String from = canary.getServiceName();
-                            String to = healthTweet.getDependency().getName();
-                            DependencyStatus status = healthTweet.getResult().getStatus();
-
-                            GraphEdge graphEdge = new GraphEdge(from, to, status);
-                            edges.add(graphEdge);
-                        }));
-
         List<GraphNode> allNodes = new ArrayList<>(graphNodesMappedByDependencyName.values());
 
-        return new Graph(new ArrayList<>(allNodes), emptyList());
+        return new Graph(new ArrayList<>(allNodes), new ArrayList<>(edges));
     }
 
     @Override
     public Graph get() {
 
-        return buildGraphFromMap(); // TODO caching mechanism
+        return buildGraphFromMap(); // TODO caching mechanism?
     }
 
     @Override

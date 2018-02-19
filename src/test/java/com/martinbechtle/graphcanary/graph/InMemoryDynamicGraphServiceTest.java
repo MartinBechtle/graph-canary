@@ -80,8 +80,11 @@ public class InMemoryDynamicGraphServiceTest {
         GraphNode dependency21 = assertContains(graph.getNodes(), "dependency-2-1");
         assertThat(dependency21.getType()).isEqualTo(DependencyType.CACHE);
 
-
-//        assertThat(graph.getEdges()).hasSize(4);
+        assertThat(graph.getEdges()).hasSize(4);
+        assertThat(graph.getEdges()).contains(new GraphEdge("service-1", "dependency-1-1", DependencyStatus.HEALTHY));
+        assertThat(graph.getEdges()).contains(new GraphEdge("service-1", "dependency-1-2", DependencyStatus.DEGRADED));
+        assertThat(graph.getEdges()).contains(new GraphEdge("service-2", "dependency-1-1", DependencyStatus.HEALTHY));
+        assertThat(graph.getEdges()).contains(new GraphEdge("service-2", "dependency-2-1", DependencyStatus.HEALTHY));
     }
 
     private GraphNode assertContains(List<GraphNode> nodeList, String name) {
@@ -91,4 +94,5 @@ public class InMemoryDynamicGraphServiceTest {
                 .findAny()
                 .orElseThrow(AssertionError::new);
     }
+
 }
