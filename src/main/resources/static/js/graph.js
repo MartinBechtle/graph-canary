@@ -7,24 +7,29 @@ const filterOptions = {
 const graphOptions = {
     nodes: {
         borderWidth: 4,
-        size: 30,
+        size: 20,
         color: {
             border: '#222222',
             background: '#666666'
         },
         font: {
             color: 'black',
-            size: 20
-        }
+            size: 14
+        },
+        physics: true
     },
     edges: {
         color: 'lightgray',
-        width: 2
+        width: 2,
+        physics: false,
+        smooth: {
+            type: 'continuous'
+        }
     },
     layout: {
         randomSeed: 0,
         hierarchical: {
-            enabled: true
+            enabled: false
         }
     }
 };
