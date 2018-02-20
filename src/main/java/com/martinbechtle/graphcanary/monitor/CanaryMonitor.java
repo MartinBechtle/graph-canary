@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static org.apache.commons.lang3.RandomUtils.nextInt;
+
 /**
  * @author Martin Bechtle
  */
@@ -26,7 +28,7 @@ public class CanaryMonitor {
         this.scheduledExecutorService = scheduledExecutorService;
         this.canaryRetriever = canaryRetriever;
 
-        properties.getEndpoints().forEach(this::scheduleCanaryCheck);
+        properties.getEndpoints().forEach(this::seedScheduleCanaryCheck);
     }
 
     public Runnable queryCanaryEndpoint(CanaryEndpoint canaryEndpoint) {
@@ -47,6 +49,17 @@ public class CanaryMonitor {
         scheduledExecutorService.schedule(
                 queryCanaryEndpoint(canaryEndpoint),
                 canaryEndpoint.getPollFrequencySec(),
+                TimeUnit.SECONDS);
+    }
+
+    /**
+     * used for the initial checks, it's randomised to avoid having all canary checks start (and then tick) at once
+     */
+    private void seedScheduleCanaryCheck(CanaryEndpoint canaryEndpoint) {
+
+        scheduledExecutorService.schedule(
+                queryCanaryEndpoint(canaryEndpoint),
+                nextInt(1, 10),
                 TimeUnit.SECONDS);
     }
 
