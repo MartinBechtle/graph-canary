@@ -3,6 +3,7 @@ package com.martinbechtle.graphcanary.api;
 import com.martinbechtle.graphcanary.graph.Graph;
 import com.martinbechtle.graphcanary.graph.GraphService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/graph")
+@CrossOrigin
 public class GraphController {
 
     private final GraphService graphService;
