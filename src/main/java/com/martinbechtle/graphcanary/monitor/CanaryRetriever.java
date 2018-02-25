@@ -3,6 +3,7 @@ package com.martinbechtle.graphcanary.monitor;
 import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.graphcanary.graph.GraphService;
 import com.martinbechtle.jcanary.api.Canary;
+import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,16 +17,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class CanaryRetriever {
 
-    private static final Logger logger = LoggerFactory.getLogger(CanaryRetriever.class );
+    private static final Logger logger = LoggerFactory.getLogger(CanaryRetriever.class);
 
     private final GraphService graphService;
 
+    private final WarningService warningService;
+
     private final CanaryHttpClient canaryHttpClient;
 
-    public CanaryRetriever(GraphService graphService, CanaryHttpClient canaryHttpClient) {
+    public CanaryRetriever(GraphService graphService,
+                           WarningService warningService,
+                           CanaryHttpClient canaryHttpClient) {
 
         this.graphService = graphService;
-
+        this.warningService = warningService;
         this.canaryHttpClient = canaryHttpClient;
     }
 
@@ -33,7 +38,8 @@ public class CanaryRetriever {
 
         try {
             Canary canary =  canaryHttpClient.getCanary(canaryEndpoint);
-            graphService.onCanaryReceived(canary);
+            Try.run(() -> graphService.onCanaryReceived(canary));
+            Try.run(() -> warningService.onCanaryReceived(canary));
         }
         catch (RuntimeException e) {
             logger.warn("Http error while retrieving canary for " + canaryEndpoint.getName(), e);
