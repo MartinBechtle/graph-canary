@@ -13,8 +13,8 @@ $(document).ready(function () {
     heartBeat();
 });
 
-$(document).click(function() {
-   lastInteraction = Date.now();
+$(document).click(function () {
+    lastInteraction = Date.now();
 });
 
 var lastSuccessfulPull = 0;
@@ -30,12 +30,12 @@ const postInteractionDelayMs = 5000;
 /**
  * delay before one successful data pull and graph reload, and the next one
  */
-const graphRefreshIntervalMs = 5000;
+const graphRefreshIntervalMs = 10000;
 
 /**
  * how long to wait before retrying after an unsuccessful data pull or exception
  */
-const retryOnErrorIntervalMs = 5000;
+const retryOnErrorIntervalMs = 10000;
 
 const heartBeatIntervalMs = 1000;
 
@@ -47,10 +47,10 @@ function heartBeat() {
             lastInteraction < Date.now() - postInteractionDelayMs) {
 
             loadGraph();
-            lastSuccessfulPull  = Date.now();
+            lastSuccessfulPull = Date.now();
         }
     }
-    catch(error) {
+    catch (error) {
         lastErrorOnPull = Date.now();
         console.log(error);
     }
@@ -78,12 +78,13 @@ function loadGraph() {
     $.get({
         url: 'graph',
 
-        success: function(data) {
+        success: function (data) {
 
             const container = document.getElementById('graph');
             graph = buildGraph(data.graph, container);
             updateFilters();
             updateHeader(data);
+            updateWarnings(data);
         }
     });
 }
@@ -121,7 +122,54 @@ function updateHeader(canaryData) {
 
 function updateWarnings(canaryData) {
 
+    const warningsList = $('#warnings-list');
+    const unhealthyList = $('#unhealthy-list');
+    warningsList.html("");
+    unhealthyList.html("");
+
+    const failedCanaries = canaryData.failedCanaries;
+    if (failedCanaries && failedCanaries.length && failedCanaries.length > 0) {
+
+        const warningDivs = failedCanaries.map(function (failedCanary) {
+            const errMsg = "Failed to retrieve from " + failedCanary.serviceName +
+                ". Reason: " + failedCanary.canaryResult + ".";
+            return '<div class="alert alert-danger">' + errMsg + '</div>';
+
+        });
+        warningsList.html(warningDivs.join(""));
+    }
+
+    const graph = canaryData.graph;
+    if (graph && graph.edges && graph.edges.length && graph.edges.length > 0) {
+
+        const unhealthyDependencyDivs = graph.edges
+            .filter(function (edge) {
+                return edge.dependencyStatus && edge.dependencyStatus !== 'HEALTHY';
+            })
+            .map(function (edge) {
+                const alertClass = "alert " + (edge.dependencyStatus === 'CRITICAL' ? 'alert-danger' : 'alert-warning');
+                const errMsg = edge.from + " from " + edge.to + " is " + edge.dependencyStatus;
+                return '<div class="' + alertClass + '">' + errMsg + '</div>';
+            });
+        unhealthyList.html(unhealthyDependencyDivs.join(""));
+    }
+
 }
+
+// function updateFilters() {
+//
+//     const services = graph.data.nodes.filter(function (node) {
+//         return node.image.includes('canary_api.png') // horrible temporary hack
+//     }).map(function (node) {
+//         return "<li><a href=\"#\">" + node.id + "</a></li>"
+//     });
+//
+//     services.push('<li role="separator" class="divider"></li>');
+//     services.push('<li><a href="#">Show all</a></li>');
+//
+//     const filters = services.join("");
+//     $('#graph-filters').html(filters)
+// }
 
 function setTopBannerClass(classToSet) {
 

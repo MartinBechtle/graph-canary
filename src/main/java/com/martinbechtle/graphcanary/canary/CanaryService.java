@@ -2,10 +2,13 @@ package com.martinbechtle.graphcanary.canary;
 
 import com.martinbechtle.graphcanary.graph.Graph;
 import com.martinbechtle.graphcanary.graph.GraphService;
+import com.martinbechtle.graphcanary.warning.Warning;
+import com.martinbechtle.graphcanary.warning.WarningService;
 import com.martinbechtle.jcanary.api.DependencyStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,9 +19,12 @@ public class CanaryService {
 
     private final GraphService graphService;
 
-    public CanaryService(GraphService graphService) {
+    private final WarningService warningService;
+
+    public CanaryService(GraphService graphService, WarningService warningService) {
 
         this.graphService = graphService;
+        this.warningService = warningService;
     }
 
     public CanaryData getCanaryData() {
@@ -42,8 +48,11 @@ public class CanaryService {
             status = moreThanThirtyPercentUnhealthy ? DependencyStatus.CRITICAL : DependencyStatus.DEGRADED;
         }
 
+        List<Warning> failedCanaries = warningService.getServiceWarnings();
+
         return new CanaryData()
                 .setGraph(graph)
-                .setStatus(status);
+                .setStatus(status)
+                .setFailedCanaries(failedCanaries);
     }
 }
