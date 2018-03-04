@@ -1,4 +1,4 @@
-package com.martinbechtle.graphcanary.api;
+package com.martinbechtle.graphcanary.canary;
 
 import com.martinbechtle.graphcanary.graph.Graph;
 import com.martinbechtle.graphcanary.graph.GraphService;

@@ -1,5 +1,7 @@
-package com.martinbechtle.graphcanary.api;
+package com.martinbechtle.graphcanary.rest;
 
+import com.martinbechtle.graphcanary.canary.CanaryData;
+import com.martinbechtle.graphcanary.canary.CanaryService;
 import com.martinbechtle.graphcanary.graph.Graph;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

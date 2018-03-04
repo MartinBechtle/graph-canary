@@ -2,6 +2,7 @@ package com.martinbechtle.graphcanary.monitor;
 
 import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.graphcanary.graph.GraphService;
+import com.martinbechtle.graphcanary.warning.WarningService;
 import com.martinbechtle.jcanary.api.Canary;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
