@@ -1,7 +1,11 @@
 package com.martinbechtle.graphcanary.canary;
 
 import com.martinbechtle.graphcanary.graph.Graph;
+import com.martinbechtle.graphcanary.warning.Warning;
+import com.martinbechtle.jcanary.api.CanaryResult;
 import com.martinbechtle.jcanary.api.DependencyStatus;
+
+import java.util.List;
 
 /**
  * @author Martin Bechtle
@@ -19,6 +23,13 @@ public class CanaryData {
      * </ul>
      */
     private DependencyStatus status;
+
+    /**
+     * List of known services for which retrieving information from the canary endpoint has failed.
+     * <p>
+     * Failure can happen for a number of reasons, see {@link CanaryResult}.
+     */
+    private List<Warning> failedCanaries;
 
     public Graph getGraph() {
 
@@ -39,6 +50,17 @@ public class CanaryData {
     public CanaryData setStatus(DependencyStatus status) {
 
         this.status = status;
+        return this;
+    }
+
+    public List<Warning> getFailedCanaries() {
+
+        return failedCanaries;
+    }
+
+    public CanaryData setFailedCanaries(List<Warning> failedCanaries) {
+
+        this.failedCanaries = failedCanaries;
         return this;
     }
 }

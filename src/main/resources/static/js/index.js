@@ -99,7 +99,6 @@ const TOP_BANNER_UNKNOWN_TEXT = 'System state is unknown.';
 
 function updateHeader(canaryData) {
 
-
     switch (canaryData.status) {
         case 'HEALTHY':
             setTopBannerClass(TOP_BANNER_HEALTHY_CLASS);
@@ -118,6 +117,10 @@ function updateHeader(canaryData) {
             setTopBannerDesc(TOP_BANNER_UNKNOWN_TEXT);
             break;
     }
+}
+
+function updateWarnings(canaryData) {
+
 }
 
 function setTopBannerClass(classToSet) {

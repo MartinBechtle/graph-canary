@@ -2,7 +2,7 @@ package com.martinbechtle.graphcanary.monitor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.martinbechtle.graphcanary.config.CanaryEndpoint;
-import com.martinbechtle.graphcanary.config.GraphConfig;
+import com.martinbechtle.graphcanary.config.GraphCanaryConfig;
 import com.martinbechtle.graphcanary.config.HttpClientProperties;
 import com.martinbechtle.graphcanary.config.JacksonConfig;
 import com.martinbechtle.jcanary.api.*;
@@ -35,7 +35,7 @@ public class CanaryHttpClientTest {
     @Before
     public void setUp() throws IOException {
 
-        OkHttpClient okHttpClient = new GraphConfig().okHttpClient(
+        OkHttpClient okHttpClient = new GraphCanaryConfig().okHttpClient(
                 new HttpClientProperties()
                         .setConnectTimeoutInMillis(500));
 

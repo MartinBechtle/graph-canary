@@ -9,11 +9,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Collections;
+import java.util.*;
 
 import static com.martinbechtle.jcanary.api.DependencyStatus.DEGRADED;
 import static com.martinbechtle.jcanary.api.DependencyStatus.HEALTHY;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -106,6 +107,28 @@ public class WarningServiceTest {
 
         warningService.onCanaryReceived(healthyCanary);
         verify(emailService).notifyServiceStatusChange(SERVICE_NAME, CanaryResult.OK);
+    }
+
+    @Test
+    public void getServiceWarnings_ShouldReturnWarningsForAllServicesThatDidNotSucceedRetrievingCanary() {
+
+        Canary service1Error = errorCanary("service1", CanaryResult.ERROR);
+        Canary service2Error = errorCanary("service2", CanaryResult.FORBIDDEN);
+        Canary service3Error = errorCanary("service3", CanaryResult.ERROR);
+        Canary service3Ok = errorCanary("service3", CanaryResult.OK);
+
+        warningService.onCanaryReceived(service1Error);
+        warningService.onCanaryReceived(service2Error);
+        warningService.onCanaryReceived(service3Error);
+        warningService.onCanaryReceived(service3Ok);
+
+        List<Warning> warnings = warningService.getServiceWarnings();
+        Set<Warning> expectedWarnings = new HashSet<>(Arrays.asList(
+                new Warning("service1", CanaryResult.ERROR),
+                new Warning("service2", CanaryResult.FORBIDDEN)
+        ));
+        // using hashset to avoid failures from order of elements in the list
+        assertThat(new HashSet<>(warnings)).isEqualTo(expectedWarnings);
     }
 
     private static Canary errorCanary(String serviceName, CanaryResult canaryResult) {
