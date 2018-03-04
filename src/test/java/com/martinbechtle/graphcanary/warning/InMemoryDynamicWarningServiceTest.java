@@ -21,13 +21,13 @@ import static org.mockito.Mockito.*;
  * @author Martin Bechtle
  */
 @RunWith(MockitoJUnitRunner.class)
-public class WarningServiceTest {
+public class InMemoryDynamicWarningServiceTest {
 
     private static final String SERVICE_NAME = "service";
     private static final String DEPENDENCY_NAME = "dependency";
 
     @InjectMocks
-    private WarningService warningService;
+    private InMemoryDynamicWarningService warningService;
 
     @Mock
     private EmailService emailService;
