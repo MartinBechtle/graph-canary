@@ -156,21 +156,6 @@ function updateWarnings(canaryData) {
 
 }
 
-// function updateFilters() {
-//
-//     const services = graph.data.nodes.filter(function (node) {
-//         return node.image.includes('canary_api.png') // horrible temporary hack
-//     }).map(function (node) {
-//         return "<li><a href=\"#\">" + node.id + "</a></li>"
-//     });
-//
-//     services.push('<li role="separator" class="divider"></li>');
-//     services.push('<li><a href="#">Show all</a></li>');
-//
-//     const filters = services.join("");
-//     $('#graph-filters').html(filters)
-// }
-
 function setTopBannerClass(classToSet) {
 
     const topBanner = $('#top-banner');
