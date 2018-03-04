@@ -17,9 +17,9 @@
         <div class="col-xs-3">
             <img src="img/canary.png" width="128px"/>
         </div>
-        <div class="col-xs-9 alert alert-success" role="alert">
-            <h3 class="alert-heading">Welcome to Graph Canary</h3>
-            <p>May the force be with you.</p>
+        <div id="top-banner" class="col-xs-9 alert alert-success" role="alert">
+            <h3 class="alert-heading">Graph Canary</h3>
+            <p id="top-banner-desc">System is healthy.</p>
         </div>
     </header>
     <button class="btn btn-info" id="toggle-hierarchical">Hierarchical view on/off</button>
@@ -33,6 +33,15 @@
     </div>
     <div id="graph-container">
         <div id="graph"></div>
+    </div>
+    <div id="warnings-container">
+        <h3>Services for which canary retrieval has failed</h3>
+        <p>(see console logs for more details or stack traces)</p>
+        <div id="warnings-list"></div>
+    </div>
+    <div id="unhealthy-dependencies">
+        <h3>Unhealthy dependencies</h3>
+        <div id="unhealthy-list"></div>
     </div>
 </div>
 

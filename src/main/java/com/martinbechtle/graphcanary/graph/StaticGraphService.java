@@ -32,6 +32,7 @@ public class StaticGraphService implements GraphService {
     @Override
     public void onCanaryReceived(Canary canary) {
 
+        // do nothing
     }
 
 }

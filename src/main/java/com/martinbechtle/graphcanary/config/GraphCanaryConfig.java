@@ -1,10 +1,15 @@
 package com.martinbechtle.graphcanary.config;
 
+import com.martinbechtle.graphcanary.email.EmailService;
+import com.martinbechtle.graphcanary.email.NoOpEmailService;
 import com.martinbechtle.graphcanary.graph.GraphService;
 import com.martinbechtle.graphcanary.graph.InMemoryDynamicGraphService;
 import com.martinbechtle.graphcanary.graph.StaticGraphService;
 import com.martinbechtle.graphcanary.monitor.CanaryMonitor;
 import com.martinbechtle.graphcanary.monitor.CanaryRetriever;
+import com.martinbechtle.graphcanary.warning.InMemoryDynamicWarningService;
+import com.martinbechtle.graphcanary.warning.StaticWarningService;
+import com.martinbechtle.graphcanary.warning.WarningService;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -21,9 +26,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  */
 @Configuration
 @EnableScheduling
-public class GraphConfig {
+public class GraphCanaryConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(GraphConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(GraphCanaryConfig.class);
 
     @Bean
     public GraphService graphProvider(CanaryProperties canaryProperties) {
@@ -52,6 +57,25 @@ public class GraphConfig {
                 canaryProperties,
                 newScheduledThreadPool(threadPoolSize),
                 canaryRetriever);
+    }
+
+    @Bean
+    public EmailService emailService() {
+
+        return new NoOpEmailService(); // TODO implement email sending functionality
+    }
+
+    @Bean
+    public WarningService warningService(CanaryProperties canaryProperties, EmailService emailService) {
+
+        if (canaryProperties.isFake()) {
+
+            logger.info("Using static warning service with fake warnings. " +
+                    "If this is unwanted please set property canary.fake to false");
+
+            return new StaticWarningService();
+        }
+        return new InMemoryDynamicWarningService(emailService);
     }
 
     @Bean
