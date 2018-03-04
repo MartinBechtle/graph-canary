@@ -13,6 +13,7 @@ import java.util.Collections;
 
 import static com.martinbechtle.jcanary.api.DependencyStatus.DEGRADED;
 import static com.martinbechtle.jcanary.api.DependencyStatus.HEALTHY;
+import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.*;
 
 /**
@@ -23,9 +24,6 @@ public class WarningServiceTest {
 
     private static final String SERVICE_NAME = "service";
     private static final String DEPENDENCY_NAME = "dependency";
-
-    // TODO implement warnings for canaries that failed to retrieve
-    // TODO how are failed canaries treated in UI?
 
     @InjectMocks
     private WarningService warningService;
@@ -48,7 +46,7 @@ public class WarningServiceTest {
         Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED);
 
         warningService.onCanaryReceived(degradedCanary);
-        verify(emailService).notifyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
+        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
     }
 
     @Test
@@ -57,7 +55,7 @@ public class WarningServiceTest {
         Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED);
 
         warningService.onCanaryReceived(degradedCanary);
-        verify(emailService).notifyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
+        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
 
         warningService.onCanaryReceived(degradedCanary);
         verifyNoMoreInteractions(emailService);
@@ -69,11 +67,50 @@ public class WarningServiceTest {
         Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED);
 
         warningService.onCanaryReceived(degradedCanary);
-        verify(emailService).notifyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
+        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
 
         Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY);
         warningService.onCanaryReceived(healthyCanary);
-        verify(emailService).notifyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY));
+        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY));
+    }
+
+    @Test
+    public void onCanaryReceived_ShouldSendEmail_WhenServiceFailsToReturnCanary() {
+
+        Canary errorCanary = errorCanary(SERVICE_NAME, CanaryResult.ERROR);
+
+        warningService.onCanaryReceived(errorCanary);
+        verify(emailService).notifyServiceStatusChange(SERVICE_NAME, CanaryResult.ERROR);
+    }
+
+    @Test
+    public void onCanaryReceived_ShouldSendEmailOnce_WhenServiceFailsToReturnCanaryMultipleTimes() {
+
+        Canary errorCanary = errorCanary(SERVICE_NAME, CanaryResult.ERROR);
+
+        warningService.onCanaryReceived(errorCanary);
+        verify(emailService).notifyServiceStatusChange(SERVICE_NAME, CanaryResult.ERROR);
+
+        warningService.onCanaryReceived(errorCanary);
+        verifyNoMoreInteractions(emailService);
+    }
+
+    @Test
+    public void onCanaryReceived_ShouldSendEmail_WhenServiceWithFailedCanaryHasOkCanaryNow() {
+
+        Canary errorCanary = errorCanary(SERVICE_NAME, CanaryResult.ERROR);
+        Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY);
+
+        warningService.onCanaryReceived(errorCanary);
+        verify(emailService).notifyServiceStatusChange(SERVICE_NAME, CanaryResult.ERROR);
+
+        warningService.onCanaryReceived(healthyCanary);
+        verify(emailService).notifyServiceStatusChange(SERVICE_NAME, CanaryResult.OK);
+    }
+
+    private static Canary errorCanary(String serviceName, CanaryResult canaryResult) {
+
+        return new Canary(serviceName, canaryResult, emptyList());
     }
 
     private static Canary singleTweetCanary(String serviceName, String dependencyName, DependencyStatus status) {
