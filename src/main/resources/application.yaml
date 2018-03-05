@@ -22,3 +22,17 @@ spring:
     livereload:
       enabled: true
       port: 35729
+  mail:
+    host: email-smtp.eu-west-1.amazonaws.com
+    username: xxxxx
+    password: yyyyy
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          port: 25
+          auth: true
+          starttls:
+            enable: true
+            required: true
