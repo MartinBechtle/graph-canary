@@ -9,7 +9,9 @@ Dashboard for canary endpoints
 To enable email notifications, just specify the recipient in your application.yaml
 
 	canary:
-      mailrecipient: your-address@email.com
+	 email:
+	  to: vash1986@gmail.com
+	  from: martin.bechtle@tide.co
 
 ### Configuring
 

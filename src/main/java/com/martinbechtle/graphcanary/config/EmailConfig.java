@@ -1,45 +1,52 @@
 package com.martinbechtle.graphcanary.config;
 
-import com.martinbechtle.graphcanary.email.EmailService;
-import com.martinbechtle.graphcanary.email.NoOpEmailService;
-import com.martinbechtle.graphcanary.email.SpringEmailService;
-import org.springframework.beans.factory.annotation.Value;
+import com.martinbechtle.graphcanary.email.*;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
+
+import java.time.Clock;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author martin
  */
 @Configuration
+@EnableConfigurationProperties(EmailProperties.class)
 public class EmailConfig {
 
-    @Bean
-    public EmailService emailService(
-            @Value("${canary.mailrecipient:''}") String mailRecipient,
-            JavaMailSender mailSender) {
+    private static final Logger logger = LoggerFactory.getLogger(EmailConfig.class);
 
-        if (mailRecipient.isEmpty()) {
+    @Bean
+    public EmailService emailService(EmailProperties emailProperties,
+                                     JavaMailSender mailSender,
+                                     StartupClock startupClock) {
+
+        boolean emailFromMissing = isEmpty(emailProperties.getFrom());
+        boolean emailToMissing = isEmpty(emailProperties.getTo());
+        if (emailFromMissing) {
+            logger.warn("Email from is not set. No emails will be sent");
+        }
+        else if (emailToMissing) {
+            logger.warn("Email to is not set. No emails will be sent");
+        }
+        if (emailFromMissing || emailToMissing) {
             return new NoOpEmailService();
         }
-        return new SpringEmailService(mailSender, mailRecipient);
+        Clock.systemDefaultZone();
+        ExecutorService asyncEmailExecutor = Executors.newFixedThreadPool(4); // make this configurable in the future?
+        return new SpringEmailService(mailSender, asyncEmailExecutor, emailProperties, startupClock);
     }
-//    @Bean
-//    public JavaMailSender getJavaMailSender() {
-//
-//        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-//        mailSender.setHost("smtp.gmail.com");
-//        mailSender.setPort(587);
-//
-//        mailSender.setUsername("my.gmail@gmail.com");
-//        mailSender.setPassword("password");
-//
-//        Properties props = mailSender.getJavaMailProperties();
-//        props.put("mail.transport.protocol", "smtp");
-//        props.put("mail.smtp.auth", "true");
-//        props.put("mail.smtp.starttls.enable", "true");
-//        props.put("mail.debug", "true");
-//
-//        return mailSender;
-//    }
+
+    @Bean
+    public StartupClock startupClock() {
+
+        return new StartupClock(Clock.systemDefaultZone());
+    }
 }
