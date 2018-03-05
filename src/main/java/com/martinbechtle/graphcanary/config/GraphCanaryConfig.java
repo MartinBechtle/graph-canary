@@ -25,7 +25,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * @author Martin Bechtle
  */
 @Configuration
-@EnableScheduling
 public class GraphCanaryConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(GraphCanaryConfig.class);
@@ -57,12 +56,6 @@ public class GraphCanaryConfig {
                 canaryProperties,
                 newScheduledThreadPool(threadPoolSize),
                 canaryRetriever);
-    }
-
-    @Bean
-    public EmailService emailService() {
-
-        return new NoOpEmailService(); // TODO implement email sending functionality
     }
 
     @Bean

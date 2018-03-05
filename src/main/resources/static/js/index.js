@@ -128,9 +128,10 @@ function updateWarnings(canaryData) {
     unhealthyList.html("");
 
     const failedCanaries = canaryData.failedCanaries;
+    var warningDivs = [];
     if (failedCanaries && failedCanaries.length && failedCanaries.length > 0) {
 
-        const warningDivs = failedCanaries.map(function (failedCanary) {
+        warningDivs = failedCanaries.map(function (failedCanary) {
             const errMsg = "Failed to retrieve from " + failedCanary.serviceName +
                 ". Reason: " + failedCanary.canaryResult + ".";
             return '<div class="alert alert-danger">' + errMsg + '</div>';
@@ -138,11 +139,15 @@ function updateWarnings(canaryData) {
         });
         warningsList.html(warningDivs.join(""));
     }
+    if (warningDivs.length === 0) {
+        warningsList.html('<div class="alert alert-success">All canaries are up</div>')
+    }
 
     const graph = canaryData.graph;
+    var unhealthyDependencyDivs = [];
     if (graph && graph.edges && graph.edges.length && graph.edges.length > 0) {
 
-        const unhealthyDependencyDivs = graph.edges
+        unhealthyDependencyDivs = graph.edges
             .filter(function (edge) {
                 return edge.dependencyStatus && edge.dependencyStatus !== 'HEALTHY';
             })
@@ -152,6 +157,9 @@ function updateWarnings(canaryData) {
                 return '<div class="' + alertClass + '">' + errMsg + '</div>';
             });
         unhealthyList.html(unhealthyDependencyDivs.join(""));
+    }
+    if (unhealthyDependencyDivs.length === 0) {
+        unhealthyList.html('<div class="alert alert-success">All dependencies healthy</div>')
     }
 
 }
