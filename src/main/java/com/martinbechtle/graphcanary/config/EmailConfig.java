@@ -39,7 +39,6 @@ public class EmailConfig {
         if (emailFromMissing || emailToMissing) {
             return new NoOpEmailService();
         }
-        Clock.systemDefaultZone();
         ExecutorService asyncEmailExecutor = Executors.newFixedThreadPool(4); // make this configurable in the future?
         return new SpringEmailService(mailSender, asyncEmailExecutor, emailProperties, startupClock);
     }
