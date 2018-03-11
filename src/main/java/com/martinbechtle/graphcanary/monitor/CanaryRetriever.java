@@ -4,10 +4,15 @@ import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.graphcanary.graph.GraphService;
 import com.martinbechtle.graphcanary.warning.WarningService;
 import com.martinbechtle.jcanary.api.Canary;
+import com.martinbechtle.jcanary.api.CanaryResult;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+
+import static java.util.Collections.emptyList;
 
 /**
  * Retrieves a {@link Canary} from a {@link CanaryEndpoint} and updates the {@link GraphService} with the new data.
@@ -37,13 +42,15 @@ public class CanaryRetriever {
 
     public void retrieveAndUpdate(CanaryEndpoint canaryEndpoint) {
 
-        try {
-            Canary canary =  canaryHttpClient.getCanary(canaryEndpoint);
-            Try.run(() -> graphService.onCanaryReceived(canary));
-            Try.run(() -> warningService.onCanaryReceived(canary));
-        }
-        catch (RuntimeException e) {
-            logger.warn("Http error while retrieving canary for " + canaryEndpoint.getName(), e);
-        }
+        String serviceName = canaryEndpoint.getName();
+
+        Canary canary = Try.of(() -> canaryHttpClient.getCanary(canaryEndpoint))
+                .getOrElseGet(throwable -> {
+                    logger.warn("Http error while retrieving canary for " + canaryEndpoint.getName(), throwable);
+                    return new Canary(serviceName, CanaryResult.ERROR, emptyList());
+                });
+
+        Try.run(() -> graphService.onCanaryReceived(canary));
+        Try.run(() -> warningService.onCanaryReceived(canary));
     }
 }
