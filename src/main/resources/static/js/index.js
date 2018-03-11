@@ -153,7 +153,7 @@ function updateWarnings(canaryData) {
             })
             .map(function (edge) {
                 const alertClass = "alert " + (edge.dependencyStatus === 'CRITICAL' ? 'alert-danger' : 'alert-warning');
-                const errMsg = edge.from + " from " + edge.to + " is " + edge.dependencyStatus;
+                const errMsg = edge.to + " from <em>" + edge.from + "</em> is " + edge.dependencyStatus;
                 return '<div class="' + alertClass + '">' + errMsg + '</div>';
             });
         unhealthyList.html(unhealthyDependencyDivs.join(""));
@@ -180,17 +180,19 @@ function setTopBannerDesc(text) {
 
 function updateFilters() {
 
-    const services = graph.data.nodes.filter(function (node) {
-        return node.image.includes('canary_api.png') // horrible temporary hack
-    }).map(function (node) {
-        return "<li><a href=\"#\">" + node.id + "</a></li>"
+    const services = graph.data.edges.map(function (edge) {
+        return edge.from;
     });
+    const uniqueServices = new Set(services);
+    const filters = [];
 
-    services.push('<li role="separator" class="divider"></li>');
-    services.push('<li><a href="#">Show all</a></li>');
+    uniqueServices.forEach(function (serviceName) {
+        filters.push("<li><a href=\"#\">" + serviceName + "</a></li>");
+    });
+    filters.push('<li role="separator" class="divider"></li>');
+    filters.push('<li><a href="#">Show all</a></li>');
 
-    const filters = services.join("");
-    $('#graph-filters').html(filters)
+    $('#graph-filters').html(filters.join(""))
 }
 
 function filter(serviceId) {
