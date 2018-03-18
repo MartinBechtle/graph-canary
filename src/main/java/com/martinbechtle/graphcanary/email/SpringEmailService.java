@@ -3,8 +3,8 @@ package com.martinbechtle.graphcanary.email;
 import com.martinbechtle.graphcanary.graph.GraphEdge;
 import com.martinbechtle.jcanary.api.CanaryResult;
 import io.vavr.control.Try;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -78,4 +78,5 @@ public class SpringEmailService implements EmailService {
                 .send(message))
                 .onFailure(Throwable::printStackTrace));
     }
+
 }

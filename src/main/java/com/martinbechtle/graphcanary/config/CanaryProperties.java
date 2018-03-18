@@ -1,5 +1,6 @@
 package com.martinbechtle.graphcanary.config;
 
+import com.martinbechtle.graphcanary.monitor.CanaryEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;

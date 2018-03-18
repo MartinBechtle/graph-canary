@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.martinbechtle.jcanary.api.DependencyStatus;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.martinbechtle.jrequire.Require.notEmpty;
 import static com.martinbechtle.jrequire.Require.notNull;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Martin Bechtle
@@ -21,15 +21,19 @@ public class GraphEdge {
 
     private final DependencyStatus dependencyStatus;
 
+    private final String statusText;
+
     @JsonCreator
     public GraphEdge(
             @JsonProperty("from") String from,
             @JsonProperty("to") String to,
-            @JsonProperty("status") DependencyStatus dependencyStatus) {
+            @JsonProperty("status") DependencyStatus dependencyStatus,
+            @JsonProperty("statusText") String statusText) {
 
         this.from = notEmpty(from);
         this.to = notEmpty(to);
         this.dependencyStatus = notNull(dependencyStatus);
+        this.statusText = ofNullable(statusText).orElse("");
     }
 
     public String getFrom() {
@@ -47,6 +51,11 @@ public class GraphEdge {
         return dependencyStatus;
     }
 
+    public String getStatusText() {
+
+        return statusText;
+    }
+
     @Override
     public String toString() {
 
@@ -54,6 +63,7 @@ public class GraphEdge {
                 "from='" + from + '\'' +
                 ", to='" + to + '\'' +
                 ", dependencyStatus=" + dependencyStatus +
+                ", statusText='" + statusText + '\'' +
                 '}';
     }
 
@@ -87,8 +97,8 @@ public class GraphEdge {
 
     private String fromToCombined() {
 
-        String safeFrom = Optional.ofNullable(from).orElse("");
-        String safeTo = Optional.ofNullable(to).orElse("");
+        String safeFrom = ofNullable(from).orElse("");
+        String safeTo = ofNullable(to).orElse("");
         return safeFrom.compareTo(safeTo) < 1 ? safeFrom + safeTo : safeTo + safeFrom;
     }
 }

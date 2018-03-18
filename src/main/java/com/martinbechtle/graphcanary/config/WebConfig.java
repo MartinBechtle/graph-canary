@@ -1,13 +1,11 @@
 package com.martinbechtle.graphcanary.config;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * @author Martin Bechtle
  */
-@Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override

@@ -1,6 +1,5 @@
 package com.martinbechtle.graphcanary.monitor;
 
-import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.graphcanary.config.CanaryProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

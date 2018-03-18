@@ -2,7 +2,6 @@ package com.martinbechtle.graphcanary.monitor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.jcanary.api.Canary;
 import com.martinbechtle.jrequire.Require;
 import okhttp3.OkHttpClient;

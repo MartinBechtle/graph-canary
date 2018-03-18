@@ -1,6 +1,5 @@
-package com.martinbechtle.graphcanary.config;
+package com.martinbechtle.graphcanary.monitor;
 
-import com.martinbechtle.graphcanary.monitor.CanaryMonitor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

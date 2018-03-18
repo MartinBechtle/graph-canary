@@ -1,6 +1,5 @@
 package com.martinbechtle.graphcanary.monitor;
 
-import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.jcanary.api.Canary;
 
 import java.io.IOException;
