@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import javax.annotation.PreDestroy;
 import java.time.Clock;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,6 +21,9 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class EmailConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailConfig.class);
+
+    // make this configurable in the future?
+    private final ExecutorService asyncEmailExecutor = Executors.newFixedThreadPool(4);
 
     @Bean
     @Profile("!test")
@@ -38,7 +42,6 @@ public class EmailConfig {
         if (emailFromMissing || emailToMissing) {
             return new NoOpEmailService();
         }
-        ExecutorService asyncEmailExecutor = Executors.newFixedThreadPool(4); // make this configurable in the future?
         return new SpringEmailService(mailSender, asyncEmailExecutor, emailProperties, startupClock);
     }
 
@@ -46,5 +49,13 @@ public class EmailConfig {
     public StartupClock startupClock() {
 
         return new StartupClock(Clock.systemDefaultZone());
+    }
+
+    @PreDestroy
+    public void destroy() {
+
+        logger.info("Shutting down email async executor");
+        asyncEmailExecutor.shutdownNow();
+        logger.info("Done");
     }
 }

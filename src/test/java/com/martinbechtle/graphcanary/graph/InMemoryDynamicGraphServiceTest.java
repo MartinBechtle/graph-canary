@@ -51,7 +51,7 @@ public class InMemoryDynamicGraphServiceTest {
                         100),
                 new HealthTweet(
                         new Dependency(DependencyImportance.SECONDARY, DependencyType.FTP, "dependency-1-2"),
-                        new HealthResult(DependencyStatus.DEGRADED, ""),
+                        new HealthResult(DependencyStatus.DEGRADED, "degraded"),
                         200)
         )));
         graphService.onCanaryReceived(new Canary("service-2", CanaryResult.OK, Arrays.asList(
@@ -81,10 +81,14 @@ public class InMemoryDynamicGraphServiceTest {
         assertThat(dependency21.getType()).isEqualTo(DependencyType.CACHE);
 
         assertThat(graph.getEdges()).hasSize(4);
-        assertThat(graph.getEdges()).contains(new GraphEdge("service-1", "dependency-1-1", DependencyStatus.HEALTHY));
-        assertThat(graph.getEdges()).contains(new GraphEdge("service-1", "dependency-1-2", DependencyStatus.DEGRADED));
-        assertThat(graph.getEdges()).contains(new GraphEdge("service-2", "dependency-1-1", DependencyStatus.HEALTHY));
-        assertThat(graph.getEdges()).contains(new GraphEdge("service-2", "dependency-2-1", DependencyStatus.HEALTHY));
+        assertThat(graph.getEdges()).contains(
+                new GraphEdge("service-1", "dependency-1-1", DependencyStatus.HEALTHY, ""));
+        assertThat(graph.getEdges()).contains(
+                new GraphEdge("service-1", "dependency-1-2", DependencyStatus.DEGRADED, "degraded"));
+        assertThat(graph.getEdges()).contains(
+                new GraphEdge("service-2", "dependency-1-1", DependencyStatus.HEALTHY, ""));
+        assertThat(graph.getEdges()).contains(
+                new GraphEdge("service-2", "dependency-2-1", DependencyStatus.HEALTHY, ""));
     }
 
     private GraphNode assertContains(List<GraphNode> nodeList, String name) {

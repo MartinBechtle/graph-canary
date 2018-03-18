@@ -1,3 +1,4 @@
+
 {
   "graph": {
     "nodes": [
@@ -18,11 +19,13 @@
       {
         "from": "from1",
         "to": "to1",
+        "statusText": "degraded",
         "dependencyStatus": "DEGRADED"
       },
       {
         "from": "from1",
         "to": "to3",
+        "statusText": "",
         "dependencyStatus": "HEALTHY"
       }
     ]

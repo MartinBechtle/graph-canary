@@ -2,8 +2,8 @@ package com.martinbechtle.graphcanary.graph;
 
 import com.martinbechtle.jcanary.api.Canary;
 import com.martinbechtle.jcanary.api.Dependency;
-import com.martinbechtle.jcanary.api.DependencyStatus;
 import com.martinbechtle.jcanary.api.DependencyType;
+import com.martinbechtle.jcanary.api.HealthResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +66,12 @@ public class InMemoryDynamicGraphService implements GraphService {
 
                                 String from = canary.getServiceName();
                                 String to = healthTweet.getDependency().getName();
-                                DependencyStatus status = healthTweet.getResult().getStatus();
+                                HealthResult healthResult = healthTweet.getResult();
 
-                                GraphEdge graphEdge = new GraphEdge(from, to, status);
+                                GraphEdge graphEdge = new GraphEdge(from, to,
+                                        healthResult.getStatus(),
+                                        healthResult.getStatusText());
+
                                 edges.add(graphEdge);
                             });
                 });

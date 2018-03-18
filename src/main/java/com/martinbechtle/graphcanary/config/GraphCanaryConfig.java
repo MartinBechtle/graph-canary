@@ -20,6 +20,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
+import javax.annotation.PreDestroy;
+import java.util.concurrent.ScheduledExecutorService;
+
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -36,6 +39,8 @@ public class GraphCanaryConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(GraphCanaryConfig.class);
 
+    private ScheduledExecutorService canaryMonitorThreadPool;
+
     @Bean
     public GraphService graphProvider(CanaryProperties canaryProperties) {
 
@@ -49,21 +54,26 @@ public class GraphCanaryConfig {
         return new InMemoryDynamicGraphService();
     }
 
+    @Bean("canaryMonitorThreadPool")
+    @Profile("!test")
+    public ScheduledExecutorService canaryMonitorThreadPool(CanaryProperties canaryProperties) {
+
+        int threadPoolSize = canaryProperties.getThreads();
+        logger.info("Initializing CanaryMonitor with {} threads", threadPoolSize);
+        canaryMonitorThreadPool = newScheduledThreadPool(threadPoolSize);
+        return canaryMonitorThreadPool;
+    }
+
     @Bean
     @Profile("!test")
-    public CanaryMonitor canaryMonitor(CanaryProperties canaryProperties, CanaryRetriever canaryRetriever) {
+    public CanaryMonitor canaryMonitor(CanaryProperties canaryProperties,
+                                       CanaryRetriever canaryRetriever,
+                                       ScheduledExecutorService canaryMonitorThreadPool) {
 
         if (canaryProperties.isFake()) {
             return null;
         }
-        int threadPoolSize = canaryProperties.getThreads();
-
-        logger.info("Initializing CanaryMonitor with {} threads", threadPoolSize);
-
-        return new CanaryMonitor(
-                canaryProperties,
-                newScheduledThreadPool(threadPoolSize),
-                canaryRetriever);
+        return new CanaryMonitor(canaryProperties, canaryMonitorThreadPool, canaryRetriever);
     }
 
     @Bean
@@ -92,6 +102,14 @@ public class GraphCanaryConfig {
                 .writeTimeout(httpClientProperties.getWriteTimeoutInMillis(), MILLISECONDS)
                 .connectionPool(connectionPool)
                 .build();
+    }
+
+    @PreDestroy
+    public void destroy() {
+
+        logger.info("Shutting down email async executor");
+        canaryMonitorThreadPool.shutdown();
+        logger.info("Done");
     }
 
 }

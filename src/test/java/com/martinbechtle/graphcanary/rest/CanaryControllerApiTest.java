@@ -62,8 +62,8 @@ public class CanaryControllerApiTest extends BaseApiTest {
                         new GraphNode("node3", DependencyType.DATABASE)
                 ),
                 asList(
-                        new GraphEdge("from1", "to1", DependencyStatus.DEGRADED),
-                        new GraphEdge("from1", "to3", HEALTHY)
+                        new GraphEdge("from1", "to1", DependencyStatus.DEGRADED, "degraded"),
+                        new GraphEdge("from1", "to3", HEALTHY, "")
                 ));
     }
 }

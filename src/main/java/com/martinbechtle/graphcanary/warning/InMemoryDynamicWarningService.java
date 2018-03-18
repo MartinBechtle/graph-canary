@@ -71,7 +71,7 @@ public class InMemoryDynamicWarningService implements WarningService {
                     if (dependencyStatus == DependencyStatus.HEALTHY) {
                         removeUnhealthyDependencyIfPresent(serviceName, dependencyName);
                     } else {
-                        addUnhealthyDependency(dependencyName, serviceName, dependencyStatus);
+                        addUnhealthyDependency(dependencyName, serviceName, dependencyStatus, result.getStatusText());
                     }
                 }
             });
@@ -101,20 +101,25 @@ public class InMemoryDynamicWarningService implements WarningService {
             if (serviceSet != null) {
                 serviceSet.remove(serviceName);
                 emailService.notifyDependencyHealthChange(
-                        new GraphEdge(serviceName, dependencyName, DependencyStatus.HEALTHY));
+                        new GraphEdge(serviceName, dependencyName, DependencyStatus.HEALTHY, ""));
             }
             return serviceSet;
         });
     }
 
-    private void addUnhealthyDependency(String dependencyName, String serviceName, DependencyStatus status) {
+    private void addUnhealthyDependency(String dependencyName,
+                                        String serviceName,
+                                        DependencyStatus status,
+                                        String statusText) {
 
         unhealthyDependencies.compute(dependencyName, (key, serviceSet) -> {
 
             Set<String> servicesPointingToDependency = ofNullable(serviceSet).orElseGet(HashSet::new);
             if (!servicesPointingToDependency.contains(serviceName)) {
+
                 servicesPointingToDependency.add(serviceName);
-                emailService.notifyDependencyHealthChange(new GraphEdge(serviceName, dependencyName, status));
+                emailService.notifyDependencyHealthChange(
+                        new GraphEdge(serviceName, dependencyName, status, statusText));
             }
             return servicesPointingToDependency;
         });

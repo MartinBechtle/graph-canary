@@ -153,8 +153,8 @@ function updateWarnings(canaryData) {
             })
             .map(function (edge) {
                 const alertClass = "alert " + (edge.dependencyStatus === 'CRITICAL' ? 'alert-danger' : 'alert-warning');
-                const errMsg = edge.to + " from <em>" + edge.from + "</em> is " + edge.dependencyStatus;
-                return '<div class="' + alertClass + '">' + errMsg + '</div>';
+                const errMsg = '<strong>' + edge.to + "</strong> from <strong>" + edge.from + "</strong> is " + edge.dependencyStatus;
+                return '<div class="' + alertClass + '"><p>' + errMsg + '</p><p><em>' + edge.statusText + '</em></p></div>';
             });
         unhealthyList.html(unhealthyDependencyDivs.join(""));
     }

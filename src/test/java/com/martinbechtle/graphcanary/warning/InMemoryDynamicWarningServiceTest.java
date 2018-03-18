@@ -35,7 +35,7 @@ public class InMemoryDynamicWarningServiceTest {
     @Test
     public void onCanaryReceived_ShouldNotSendEmail_WhenHealthyTweetReceived_AndDependencyWasAlreadyHealthy() {
 
-        Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY);
+        Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY, "");
 
         warningService.onCanaryReceived(healthyCanary);
         verifyZeroInteractions(emailService);
@@ -44,19 +44,21 @@ public class InMemoryDynamicWarningServiceTest {
     @Test
     public void onCanaryReceived_ShouldSendEmail_WhenUnhealthyTweetReceived_AndDependencyWasPreviouslyHealthy() {
 
-        Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED);
+        Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText");
 
         warningService.onCanaryReceived(degradedCanary);
-        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
+        verify(emailService).notifyDependencyHealthChange(
+                new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText"));
     }
 
     @Test
     public void onCanaryReceived_ShouldSendEmailOnce_WhenUnhealthyTweetReceivedTwice() {
 
-        Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED);
+        Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText");
 
         warningService.onCanaryReceived(degradedCanary);
-        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
+        verify(emailService).notifyDependencyHealthChange(
+                new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText"));
 
         warningService.onCanaryReceived(degradedCanary);
         verifyNoMoreInteractions(emailService);
@@ -65,14 +67,15 @@ public class InMemoryDynamicWarningServiceTest {
     @Test
     public void onCanaryReceived_ShouldSendEmailAgain_WhenUnhealthyDependencyBecomesHealthy() {
 
-        Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED);
+        Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText");
 
         warningService.onCanaryReceived(degradedCanary);
-        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED));
+        verify(emailService).notifyDependencyHealthChange(
+                new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText"));
 
-        Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY);
+        Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY, "");
         warningService.onCanaryReceived(healthyCanary);
-        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY));
+        verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY, ""));
     }
 
     @Test
@@ -100,7 +103,7 @@ public class InMemoryDynamicWarningServiceTest {
     public void onCanaryReceived_ShouldSendEmail_WhenServiceWithFailedCanaryHasOkCanaryNow() {
 
         Canary errorCanary = errorCanary(SERVICE_NAME, CanaryResult.ERROR);
-        Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY);
+        Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY, "");
 
         warningService.onCanaryReceived(errorCanary);
         verify(emailService).notifyServiceStatusChange(SERVICE_NAME, CanaryResult.ERROR);
@@ -136,11 +139,14 @@ public class InMemoryDynamicWarningServiceTest {
         return new Canary(serviceName, canaryResult, emptyList());
     }
 
-    private static Canary singleTweetCanary(String serviceName, String dependencyName, DependencyStatus status) {
+    private static Canary singleTweetCanary(String serviceName,
+                                            String dependencyName,
+                                            DependencyStatus status,
+                                            String statusText) {
 
         return new Canary(serviceName, CanaryResult.OK, Collections.singletonList(new HealthTweet(
                 new Dependency(DependencyImportance.PRIMARY, DependencyType.API, dependencyName),
-                new HealthResult(status, ""), 100
+                new HealthResult(status, statusText), 100
         )));
     }
 }
