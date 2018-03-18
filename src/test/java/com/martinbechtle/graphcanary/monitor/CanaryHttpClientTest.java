@@ -1,9 +1,7 @@
 package com.martinbechtle.graphcanary.monitor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.graphcanary.config.GraphCanaryConfig;
-import com.martinbechtle.graphcanary.config.HttpClientProperties;
 import com.martinbechtle.graphcanary.config.JacksonConfig;
 import com.martinbechtle.jcanary.api.*;
 import okhttp3.OkHttpClient;

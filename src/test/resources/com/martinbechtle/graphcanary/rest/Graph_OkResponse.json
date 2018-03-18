@@ -1,0 +1,37 @@
+{
+  "graph": {
+    "nodes": [
+      {
+        "name": "node1",
+        "type": "API"
+      },
+      {
+        "name": "node2",
+        "type": "WORKER"
+      },
+      {
+        "name": "node3",
+        "type": "DATABASE"
+      }
+    ],
+    "edges": [
+      {
+        "from": "from1",
+        "to": "to1",
+        "dependencyStatus": "DEGRADED"
+      },
+      {
+        "from": "from1",
+        "to": "to3",
+        "dependencyStatus": "HEALTHY"
+      }
+    ]
+  },
+  "status": "HEALTHY",
+  "failedCanaries": [
+    {
+      "serviceName": "node4",
+      "canaryResult": "ERROR"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-package com.martinbechtle.graphcanary.config;
+package com.martinbechtle.graphcanary.monitor;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -6,8 +6,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by martin on 30/10/2017.
- *
  * @author Martin Bechtle
  */
 public class CanaryEndpoint {

@@ -1,12 +1,13 @@
 package com.martinbechtle.graphcanary.config;
 
+import com.martinbechtle.graphcanary.email.EmailConfig;
 import com.martinbechtle.graphcanary.email.EmailService;
-import com.martinbechtle.graphcanary.email.NoOpEmailService;
 import com.martinbechtle.graphcanary.graph.GraphService;
 import com.martinbechtle.graphcanary.graph.InMemoryDynamicGraphService;
 import com.martinbechtle.graphcanary.graph.StaticGraphService;
 import com.martinbechtle.graphcanary.monitor.CanaryMonitor;
 import com.martinbechtle.graphcanary.monitor.CanaryRetriever;
+import com.martinbechtle.graphcanary.monitor.HttpClientProperties;
 import com.martinbechtle.graphcanary.warning.InMemoryDynamicWarningService;
 import com.martinbechtle.graphcanary.warning.StaticWarningService;
 import com.martinbechtle.graphcanary.warning.WarningService;
@@ -16,7 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -25,6 +27,11 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * @author Martin Bechtle
  */
 @Configuration
+@Import({
+        EmailConfig.class,
+        JacksonConfig.class,
+        WebConfig.class
+})
 public class GraphCanaryConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(GraphCanaryConfig.class);
@@ -43,6 +50,7 @@ public class GraphCanaryConfig {
     }
 
     @Bean
+    @Profile("!test")
     public CanaryMonitor canaryMonitor(CanaryProperties canaryProperties, CanaryRetriever canaryRetriever) {
 
         if (canaryProperties.isFake()) {

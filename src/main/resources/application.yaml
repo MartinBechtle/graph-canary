@@ -12,6 +12,8 @@ canary:
     pollFrequencySec: 5
 }]
 
+server.contextPath: '/'
+
 canaryMonitor:
   httpClient:
     maxConnections: 20

@@ -1,6 +1,5 @@
 package com.martinbechtle.graphcanary.monitor;
 
-import com.martinbechtle.graphcanary.config.CanaryEndpoint;
 import com.martinbechtle.graphcanary.graph.GraphService;
 import com.martinbechtle.graphcanary.warning.WarningService;
 import com.martinbechtle.jcanary.api.Canary;
@@ -9,8 +8,6 @@ import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 import static java.util.Collections.emptyList;
 

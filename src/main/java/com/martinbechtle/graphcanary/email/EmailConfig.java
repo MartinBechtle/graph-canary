@@ -1,11 +1,10 @@
-package com.martinbechtle.graphcanary.config;
+package com.martinbechtle.graphcanary.email;
 
-import com.martinbechtle.graphcanary.email.*;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.Clock;
@@ -17,13 +16,13 @@ import static org.springframework.util.StringUtils.isEmpty;
 /**
  * @author martin
  */
-@Configuration
 @EnableConfigurationProperties(EmailProperties.class)
 public class EmailConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailConfig.class);
 
     @Bean
+    @Profile("!test")
     public EmailService emailService(EmailProperties emailProperties,
                                      JavaMailSender mailSender,
                                      StartupClock startupClock) {
