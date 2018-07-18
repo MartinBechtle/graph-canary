@@ -73,6 +73,8 @@ public class InMemoryDynamicWarningServiceTest {
         verify(emailService).notifyDependencyHealthChange(
                 new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText"));
 
+        reset(emailService);
+
         Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY, "");
         warningService.onCanaryReceived(healthyCanary);
         verify(emailService).notifyDependencyHealthChange(new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY, ""));
@@ -110,8 +112,6 @@ public class InMemoryDynamicWarningServiceTest {
 
         warningService.onCanaryReceived(healthyCanary);
         verify(emailService).notifyServiceStatusChange(SERVICE_NAME, CanaryResult.OK);
-        verify(emailService).notifyDependencyHealthChange(
-                new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DependencyStatus.HEALTHY, ""));
     }
 
     @Test
