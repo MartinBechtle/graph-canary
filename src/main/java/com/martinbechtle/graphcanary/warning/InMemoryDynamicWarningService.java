@@ -69,7 +69,7 @@ public class InMemoryDynamicWarningService implements WarningService {
                 if (!isEmpty(dependencyName)) {
 
                     if (dependencyStatus == DependencyStatus.HEALTHY) {
-                        removeUnhealthyDependencyIfPresent(serviceName, dependencyName);
+                        removeUnhealthyDependencyIfPresent(dependencyName, serviceName);
                     } else {
                         addUnhealthyDependency(dependencyName, serviceName, dependencyStatus, result.getStatusText());
                     }

@@ -110,6 +110,8 @@ public class InMemoryDynamicWarningServiceTest {
 
         warningService.onCanaryReceived(healthyCanary);
         verify(emailService).notifyServiceStatusChange(SERVICE_NAME, CanaryResult.OK);
+        verify(emailService).notifyDependencyHealthChange(
+                new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DependencyStatus.HEALTHY, ""));
     }
 
     @Test

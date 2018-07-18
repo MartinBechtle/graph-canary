@@ -35,7 +35,7 @@ Once the image is uploaded to your registry, you can run with different profiles
 
 Steps:
 * Make sure you have JRE 8
-* Customise application.yaml
+* Customise application.yaml 
 * Run with IntelliJ as a Spring Boot application, or run with the embedded gradle dist:
 
 	./gradlew bootRun
@@ -74,3 +74,9 @@ Here is an example of setting up in your application.yaml with Amazon SES (simpl
 For further examples, such as using with Gmail, please refer to Spring's documentation or the guide on Baeldung:
 * http://www.baeldung.com/spring-email
 * https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-email.html
+
+## Troubleshooting
+
+If weird duplication of services occurs, check your configuration. 
+When configuring the canary endpoints, make sure that you give them the correct name, IE it needs to correspond to the
+service name that the canary endpoint returns.
