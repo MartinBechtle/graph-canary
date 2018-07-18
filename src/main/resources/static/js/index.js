@@ -25,12 +25,12 @@ var lastInteraction = 0;
  * will not refresh graph if this time hasn't passed since last user interaction, as it might interfere with the user
  * trying to interact with the graph
  */
-const postInteractionDelayMs = 5000;
+const postInteractionDelayMs = 10000;
 
 /**
  * delay before one successful data pull and graph reload, and the next one
  */
-const graphRefreshIntervalMs = 10000;
+const graphRefreshIntervalMs = 30000;
 
 /**
  * how long to wait before retrying after an unsuccessful data pull or exception

@@ -59,15 +59,15 @@ public class CanaryHttpClient {
 
                 return objectMapper.readValue(response.body().bytes(), Canary.class);
             }
-            logger.warn("Non-successful http response while retrieving canary at " + canaryEndpoint.getUrl());
+            logger.warn("Non-successful http response while retrieving canary at {}", canaryEndpoint.getUrl());
             throw new CanaryHttpException("Status: " + responseCode);
         }
         catch (JsonProcessingException e) {
-            logger.warn("Invalid response body found while retrieving canary at " + canaryEndpoint.getUrl());
+            logger.warn("Invalid response body found while retrieving canary at {}", canaryEndpoint.getUrl());
             throw new CanaryMappingException(e);
         }
         catch (IOException e) {
-            logger.warn("Network exception while retrieving canary at " + canaryEndpoint.getUrl());
+            logger.warn("Network exception while retrieving canary at {}", canaryEndpoint.getUrl());
             throw new CanaryHttpException(e);
         }
     }
