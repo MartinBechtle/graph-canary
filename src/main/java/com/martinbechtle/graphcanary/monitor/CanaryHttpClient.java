@@ -57,9 +57,12 @@ public class CanaryHttpClient {
 
             if (response.isSuccessful() || isUnauthorized(responseCode)) {
 
-                return objectMapper.readValue(response.body().bytes(), Canary.class);
+                String responseBody = new String(response.body().bytes());
+                logger.trace("Received body from {}:\n{}", canaryEndpoint.getName(), responseBody);
+                return objectMapper.readValue(responseBody, Canary.class);
             }
-            logger.warn("Non-successful http response while retrieving canary at {}", canaryEndpoint.getUrl());
+            logger.warn("Non-successful {} http response while retrieving canary at {}",
+                    responseCode, canaryEndpoint.getUrl());
             throw new CanaryHttpException("Status: " + responseCode);
         }
         catch (JsonProcessingException e) {
