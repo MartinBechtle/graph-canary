@@ -98,8 +98,8 @@ public class InMemoryDynamicWarningService implements WarningService {
     private void removeUnhealthyDependencyIfPresent(String dependencyName, String serviceName) {
 
         unhealthyDependencies.compute(dependencyName, (key, serviceSet) -> {
-            if (serviceSet != null) {
-                serviceSet.remove(serviceName);
+            if (serviceSet != null && serviceSet.remove(serviceName)) {
+                // dependency was present in the set, thus unhealthy, now let's notify it's healthy again
                 emailService.notifyDependencyHealthChange(
                         new GraphEdge(serviceName, dependencyName, DependencyStatus.HEALTHY, ""));
             }

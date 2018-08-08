@@ -42,6 +42,32 @@ public class InMemoryDynamicWarningServiceTest {
     }
 
     @Test
+    public void onCanaryReceived_ShouldNotSendEmail_WhenHealthyTweetReceived_AndPreviouslyUnhealthyDependencyIsNowHealthy() {
+
+        Canary healthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY, "");
+        warningService.onCanaryReceived(healthyCanary);
+
+        verifyZeroInteractions(emailService);
+
+        Canary unhealthyCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText");
+        warningService.onCanaryReceived(unhealthyCanary);
+
+        verify(emailService).notifyDependencyHealthChange(
+                new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText"));
+        reset(emailService);
+
+        Canary healthyAgainCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, HEALTHY, "");
+        warningService.onCanaryReceived(healthyAgainCanary);
+
+        verify(emailService).notifyDependencyHealthChange(
+                new GraphEdge(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText"));
+        reset(emailService);
+
+        warningService.onCanaryReceived(healthyAgainCanary);
+        verifyZeroInteractions(emailService); // was healthy previously, no email should be sent
+    }
+
+    @Test
     public void onCanaryReceived_ShouldSendEmail_WhenUnhealthyTweetReceived_AndDependencyWasPreviouslyHealthy() {
 
         Canary degradedCanary = singleTweetCanary(SERVICE_NAME, DEPENDENCY_NAME, DEGRADED, "statusText");
